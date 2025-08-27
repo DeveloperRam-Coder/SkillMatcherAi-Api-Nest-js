@@ -4,7 +4,7 @@
   "description": "Backend API for SkillMatcher AI application built with NestJS",
   "main": "dist/main.js",
   "scripts": {
-    "build": "tsc",
+    "build": "nest build",
     "vercel-build": "npm run build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
