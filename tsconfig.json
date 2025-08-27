@@ -17,5 +17,7 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
-  }
+  },
+  "include": ["src/**/*", "api/**/*"],       // ✅ Include both source and Vercel handler
+  "exclude": ["node_modules", "dist"]        // Optional but recommended
 }
