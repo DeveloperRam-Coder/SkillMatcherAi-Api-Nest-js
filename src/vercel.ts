@@ -1,3 +1,4 @@
+// src/main.serverless.ts
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
@@ -7,7 +8,6 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import * as express from 'express';
 
-// Create a single Express server instance for serverless
 const server = express();
 
 async function createApp(expressInstance: express.Express) {
@@ -17,10 +17,8 @@ async function createApp(expressInstance: express.Express) {
 
   const configService = app.get(ConfigService);
 
-  // Global prefix
   app.setGlobalPrefix('api');
 
-  // CORS configuration
   const allowedOrigins = (configService.get('CLIENT_ORIGINS') ||
     configService.get('CLIENT_ORIGIN') ||
     'http://localhost:5173,http://localhost:8080')
@@ -37,17 +35,14 @@ async function createApp(expressInstance: express.Express) {
     optionsSuccessStatus: 200,
   });
 
-  // Global middleware
   app.use(cookieParser());
 
-  // Global pipes
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
     forbidNonWhitelisted: true,
     transform: true,
   }));
 
-  // Swagger documentation
   const config = new DocumentBuilder()
     .setTitle('SkillMatcher AI API')
     .setDescription('Backend API for SkillMatcher AI application')
@@ -58,21 +53,14 @@ async function createApp(expressInstance: express.Express) {
   SwaggerModule.setup('api/docs', app, document);
 
   await app.init();
-
-  return app;
 }
 
 let isAppInitialized = false;
 
-// Prepare the server once during cold start
 createApp(server).then(() => {
   isAppInitialized = true;
 }).catch((err) => {
-  // eslint-disable-next-line no-console
   console.error('Nest initialization error:', err);
 });
 
-// Export the Express server. Vercel will treat this as a request handler.
 export default server;
-
-
