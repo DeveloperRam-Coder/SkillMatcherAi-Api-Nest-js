@@ -1,14 +1,4 @@
 {
   "version": 2,
-  "env": {
-    "NODE_ENV": "production"
-  },
-  "builds": [
-    { "src": "dist/vercel.js", "use": "@vercel/node" }
-  ],
-  "routes": [
-    { "src": "/(.*)", "dest": "dist/vercel.js" }
-  ]
+  "outputDirectory": "dist"
 }
-
-
