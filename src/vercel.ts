@@ -17,7 +17,7 @@ async function createApp(expressInstance: Express) {
 
   const configService = app.get(ConfigService);
 
-  app.setGlobalPrefix('api');
+  // No global prefix in serverless to avoid /api/api paths on Vercel
 
   const allowedOrigins = (configService.get('CLIENT_ORIGINS') ||
     configService.get('CLIENT_ORIGIN') ||
@@ -50,12 +50,18 @@ async function createApp(expressInstance: Express) {
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
+  SwaggerModule.setup('docs', app, document);
 
   await app.init();
 }
 
 let isAppInitialized = false;
+
+// During cold start, return 503 until Nest is ready
+server.use((req, res, next) => {
+  if (isAppInitialized) return next();
+  res.status(503).json({ status: 'initializing' });
+});
 
 createApp(server).then(() => {
   isAppInitialized = true;
