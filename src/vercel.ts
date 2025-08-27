@@ -3,14 +3,14 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ExpressAdapter } from '@nestjs/platform-express';
-import * as express from 'express';
+import express, { Express } from 'express';
 
 const server = express();
 
-async function createApp(expressInstance: express.Express) {
+async function createApp(expressInstance: Express) {
   const app = await NestFactory.create(AppModule, new ExpressAdapter(expressInstance), {
     logger: ['log', 'error', 'warn']
   });
