@@ -14,13 +14,18 @@ export class UsersService {
     if (exists) throw new ConflictException('Email already registered');
 
     const passwordHash = await bcrypt.hash(dto.password, 10);
-    const user = new this.userModel({ name: dto.name, email: dto.email, passwordHash });
+    const user = new this.userModel({ 
+      name: dto.name, 
+      email: dto.email, 
+      password: passwordHash,
+      role: dto.role || 'candidate'
+    });
     return user.save();
   }
 
   async findByEmail(email: string, withPassword = false): Promise<UserDocument | null> {
     if (withPassword) {
-      return this.userModel.findOne({ email }).select('+passwordHash').exec();
+      return this.userModel.findOne({ email }).select('+password').exec();
     }
     return this.userModel.findOne({ email }).exec();
   }
@@ -31,9 +36,13 @@ export class UsersService {
     return user;
   }
 
-  /** Return safe view (without passwordHash) */
+  async updateRefreshToken(id: string, refreshToken: string): Promise<void> {
+    await this.userModel.findByIdAndUpdate(id, { refreshToken }).exec();
+  }
+
+  /** Return safe view (without password) */
   toPublic(user: any) {
-    const { _id, name, email, createdAt, updatedAt } = user;
-    return { id: _id.toString(), name, email, createdAt, updatedAt };
+    const { _id, name, email, role, createdAt, updatedAt } = user;
+    return { id: _id.toString(), name, email, role, createdAt, updatedAt };
   }
 }
