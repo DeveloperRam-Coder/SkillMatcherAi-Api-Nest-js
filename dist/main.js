@@ -7,7 +7,11 @@ const app_module_1 = require("./app.module");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.enableCors({
-        origin: ['https://skill-matcher-ai.vercel.app', 'http://localhost:5173'],
+        origin: [
+            'https://skill-matcher-ai.vercel.app',
+            'http://localhost:8080',
+            'http://localhost:5173',
+        ],
         credentials: true,
     });
     app.setGlobalPrefix('api');
