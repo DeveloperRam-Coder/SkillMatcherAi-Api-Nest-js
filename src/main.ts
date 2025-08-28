@@ -8,7 +8,7 @@ async function bootstrap() {
 
   // Enable CORS
   app.enableCors({
-    origin: ['http://localhost:8080', 'http://localhost:5173'], // allowed frontends
+    origin: ['https://skill-matcher-ai.vercel.app', 'http://localhost:5173'], // allowed frontends
     credentials: true, // allow cookies, auth headers
   });
 
