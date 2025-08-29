@@ -7,14 +7,20 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // ✅ Enable CORS for both local + production
-  app.enableCors({
-    origin: [
-      'https://skill-matcher-ai.vercel.app', // Production frontend
-      'http://localhost:8080',                // Vite dev
-      'http://localhost:5173',                // Sometimes Vite uses 5173
-    ],
-    credentials: true,
-  });
+app.enableCors({
+  origin: (origin, callback) => {
+    if (
+      !origin || // allow requests with no origin (like curl or mobile apps)
+      origin === 'https://skill-matcher-ai.vercel.app' || // production frontend
+      /^http:\/\/localhost:\d+$/.test(origin) // any localhost with any port
+    ) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+});
 
   app.setGlobalPrefix('api');
 

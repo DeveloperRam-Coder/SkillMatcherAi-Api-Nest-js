@@ -7,11 +7,16 @@ const app_module_1 = require("./app.module");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.enableCors({
-        origin: [
-            'https://skill-matcher-ai.vercel.app',
-            'http://localhost:8080',
-            'http://localhost:5173',
-        ],
+        origin: (origin, callback) => {
+            if (!origin ||
+                origin === 'https://skill-matcher-ai.vercel.app' ||
+                /^http:\/\/localhost:\d+$/.test(origin)) {
+                callback(null, true);
+            }
+            else {
+                callback(new Error('Not allowed by CORS'));
+            }
+        },
         credentials: true,
     });
     app.setGlobalPrefix('api');
